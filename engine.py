@@ -10,7 +10,8 @@ from game_messages import Message
 from game_states import GameStates
 from input_handlers import handle_keys, handle_mouse, handle_main_menu
 from loader_functions.initialize_new_game import get_constants, get_game_variables
-from loader_functions.data_loaders import load_game, save_game
+from loader_functions.json_loaders import load_game, save_game
+# from loader_functions.data_loaders import load_game, save_game
 from menus import main_menu, message_box
 from render_functions import clear_all, render_all
 
@@ -68,6 +69,10 @@ def main():
                 try:
                     player, entities, game_map, message_log, game_state = load_game()
                     show_main_menu = False
+
+                    if player.fighter.hp <= 0:
+                        game_state = GameStates.PLAYER_DEAD
+
                 except FileNotFoundError:
                     show_load_error_message = True
             elif exit_game:
@@ -87,7 +92,9 @@ def play_game(player, entities, game_map, message_log, game_state, con, panel, c
     key = libtcod.Key()
     mouse = libtcod.Mouse()
 
-    game_state = GameStates.PLAYERS_TURN
+    if game_state != GameStates.PLAYER_DEAD:
+        game_state = GameStates.PLAYERS_TURN
+
     previous_game_state = game_state
 
     targeting_item = None

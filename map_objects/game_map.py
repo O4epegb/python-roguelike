@@ -25,9 +25,30 @@ class GameMap:
     def __init__(self, width, height, dungeon_level = 1):
         self.width = width
         self.height = height
+        self.dungeon_level = dungeon_level
         self.tiles = self.initialize_tiles()
 
-        self.dungeon_level = dungeon_level
+    def to_json(self):
+        json_data = {
+            'width': self.width,
+            'height': self.height,
+            'dungeon_level': self.dungeon_level,
+            'tiles': [[tile.to_json() for tile in tile_rows] for tile_rows in self.tiles]
+        }
+
+        return json_data
+
+    @staticmethod
+    def from_json(json_data):
+        width = json_data.get('width')
+        height = json_data.get('height')
+        dungeon_level = json_data.get('dungeon_level')
+        tiles_json = json_data.get('tiles')
+
+        game_map = GameMap(width, height, dungeon_level)
+        game_map.tiles = [[Tile.from_json(tile) for tile in tile_rows] for tile_rows in tiles_json]
+
+        return game_map
 
     def initialize_tiles(self):
         tiles = [[Tile(True) for y in range(self.height)] for x in range(self.width)]

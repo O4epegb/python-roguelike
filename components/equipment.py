@@ -1,5 +1,5 @@
 from equipment_slots import EquipmentSlots
-
+from entity import Entity
 
 class Equipment:
     def __init__(self, main_hand=None, off_hand=None):
@@ -69,3 +69,22 @@ class Equipment:
                 results.append({'equipped': equippable_entity})
 
         return results
+
+    def to_json(self):
+
+        return {
+            'main_hand': self.main_hand and self.main_hand.to_json(),
+            'off_hand': self.off_hand and self.off_hand.to_json()
+        }
+
+    @staticmethod
+    def from_json(json_data):
+        main_hand_json = json_data.get('main_hand')
+        off_hand_json = json_data.get('off_hand')
+
+        main_hand = main_hand_json and Entity.from_json(main_hand_json)
+        off_hand = off_hand_json and Entity.from_json(off_hand_json)
+
+        equipment = Equipment(main_hand, off_hand)
+
+        return equipment
